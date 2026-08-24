@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -348,6 +348,55 @@ test("keeps localized settings and values within narrow widths", async () => {
 		const output = lines.join("\n");
 		assert.match(output, /开启/);
 		assert.match(output, /简体中文/);
+	}
+});
+
+test("persists missing cache-hit keys from old configs", () => {
+	const agentDir = mkdtempSync(join(tmpdir(), "pi-open-tui-"));
+	const previousAgentDir = process.env.PI_CODING_AGENT_DIR;
+	try {
+		process.env.PI_CODING_AGENT_DIR = agentDir;
+		const configPath = join(agentDir, "open-tui.json");
+		writeFileSync(configPath, JSON.stringify({
+			enabled: false,
+			footerSegments: { tokens: false },
+			telemetry: { enabled: true, tokens: false },
+		}), "utf8");
+
+		const loaded = loadConfig();
+		assert.equal(loaded.enabled, false);
+		assert.equal(loaded.footerSegments.tokens, false);
+		assert.equal(loaded.footerSegments.cacheHit, true);
+		assert.equal(loaded.telemetry.tokens, false);
+		assert.equal(loaded.telemetry.cacheHit, true);
+
+		const persisted = JSON.parse(readFileSync(configPath, "utf8")) as OpenTuiConfig;
+		assert.equal(persisted.enabled, false);
+		assert.equal(persisted.footerSegments.tokens, false);
+		assert.equal(persisted.footerSegments.cacheHit, true);
+		assert.equal(persisted.telemetry.tokens, false);
+		assert.equal(persisted.telemetry.cacheHit, true);
+	} finally {
+		if (previousAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+		else process.env.PI_CODING_AGENT_DIR = previousAgentDir;
+		rmSync(agentDir, { recursive: true, force: true });
+	}
+});
+
+test("does not rewrite configs that already include every default key", () => {
+	const agentDir = mkdtempSync(join(tmpdir(), "pi-open-tui-"));
+	const previousAgentDir = process.env.PI_CODING_AGENT_DIR;
+	try {
+		process.env.PI_CODING_AGENT_DIR = agentDir;
+		const configPath = join(agentDir, "open-tui.json");
+		const original = `${JSON.stringify(DEFAULT_CONFIG, null, 2)}\n`;
+		writeFileSync(configPath, original, "utf8");
+		loadConfig();
+		assert.equal(readFileSync(configPath, "utf8"), original);
+	} finally {
+		if (previousAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+		else process.env.PI_CODING_AGENT_DIR = previousAgentDir;
+		rmSync(agentDir, { recursive: true, force: true });
 	}
 });
 

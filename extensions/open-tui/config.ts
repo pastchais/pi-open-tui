@@ -115,6 +115,22 @@ function deepMerge<T>(base: T, override: unknown): T {
 	return result as T;
 }
 
+function hasMissingDefaultKeys(base: unknown, override: unknown): boolean {
+	if (typeof base !== "object" || base === null || Array.isArray(base)) {
+		return false;
+	}
+	if (typeof override !== "object" || override === null || Array.isArray(override)) {
+		return true;
+	}
+	const baseRec = base as Record<string, unknown>;
+	const overrideRec = override as Record<string, unknown>;
+	for (const key of Object.keys(baseRec)) {
+		if (!Object.hasOwn(overrideRec, key)) return true;
+		if (hasMissingDefaultKeys(baseRec[key], overrideRec[key])) return true;
+	}
+	return false;
+}
+
 export function ensureConfigExists(): void {
 	const path = getConfigPath();
 	if (existsSync(path)) return;
@@ -148,6 +164,9 @@ export function loadConfig(notify?: (msg: string, level: "warning" | "info") => 
 			config.fullscreen.wheelScrollLines,
 			DEFAULT_CONFIG.fullscreen.wheelScrollLines,
 		);
+		if (hasMissingDefaultKeys(DEFAULT_CONFIG, parsed)) {
+			saveConfig(config);
+		}
 		return config;
 	} catch (err) {
 		notify?.(`open-tui config parse error: ${err instanceof Error ? err.message : String(err)}`, "warning");

@@ -1,6 +1,6 @@
 {
   "name": "pi-open-tui",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "Fork of pi-open-tui with cache-hit rate in the footer and turn telemetry.",
   "type": "module",
   "repository": {
