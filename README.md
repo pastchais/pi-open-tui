@@ -2,17 +2,17 @@
 
 **English** | [简体中文](./README.zh-CN.md)
 
-A polished terminal interface for the [Pi](https://pi.dev) coding agent. It brings the strongest ideas from pi-haiku, pi-claude-code-tui, and pi-zentui into one configurable extension.
+A polished terminal interface for the [Pi](https://pi.dev) coding agent. This is a maintained fork of [OldSuns/pi-open-tui](https://github.com/OldSuns/pi-open-tui) that adds a dedicated cache-hit rate to the footer and turn telemetry.
 
 ![pi-open-tui preview](https://raw.githubusercontent.com/OldSuns/pi-open-tui/main/assets/preview_dashboard_1.png)
 
 ## Highlights
 
 - **Pi header** with model, thinking level, working directory, and useful slash-command hints
-- **Responsive footer** with Git state, detected runtime, context usage, token counts, cost, and extension status
+- **Responsive footer** with Git state, detected runtime, context usage, token counts, latest cache-hit rate, cost, and extension status
 - **Framed editor** with block, bar, and underline cursor styles
 - **Project awareness** for 50+ runtimes and detailed Git states, including ahead/behind, staged, modified, untracked, stashed, and detached HEAD
-- **Turn telemetry** for TPS, time to first token (TTFT), duration, stalls, tokens, and list-price rate
+- **Turn telemetry** for TPS, time to first token (TTFT), duration, stalls, tokens, cache-hit rate, and list-price rate
 - **Interactive settings** through `/open-tui`, available in English and Simplified Chinese
 - **Version-guarded Pi compatibility shim**: fullscreen wheel speed falls back to Pi's default if its runtime support changes
 
@@ -27,13 +27,13 @@ A polished terminal interface for the [Pi](https://pi.dev) coding agent. It brin
 Install the extension:
 
 ```bash
-pi install npm:pi-open-tui
+pi install git:github.com/pastchais/pi-open-tui
 ```
 
 Or try it for one session:
 
 ```bash
-pi -e npm:pi-open-tui
+pi -e git:github.com/pastchais/pi-open-tui
 ```
 
 ## Font and icons
@@ -72,6 +72,7 @@ Run `/open-tui` to open the settings dialog. It provides **General**, **Appearan
     "runtime": true,
     "context": true,
     "tokens": true,
+    "cacheHit": true,
     "cost": true,
     "extensionStatuses": true
   },
@@ -81,6 +82,7 @@ Run `/open-tui` to open the settings dialog. It provides **General**, **Appearan
     "ttft": true,
     "duration": true,
     "tokens": true,
+    "cacheHit": true,
     "stalls": true,
     "cost": true
   }
@@ -107,12 +109,12 @@ Fullscreen wheel speed uses an isolated compatibility shim for Pi 0.84.2's runti
 After each complete agent run, pi-open-tui shows one transient result. Tool-call turns are combined into that result:
 
 ```text
-> TPS 42.5 tok/s | ~ TTFT 1.2s | + 29.7s | ↑ 567 | ↓ 1.2k | ! stall 1x / 4.3s | $ $3.60/M
+> TPS 42.5 tok/s | ~ TTFT 1.2s | + 29.7s | ↑ 567 | ↓ 1.2k | c CH 88.2% | ! stall 1x / 4.3s | $ $3.60/M
 ```
 
 TPS is calculated from all provider-reported assistant output tokens divided by the total generation time across the run. Timing starts at `turn_start` and ends at the assistant `message_end`, so it includes TTFT, hidden reasoning, buffering, and stalls; tool execution between turns is excluded. Runs without output tokens or measurable generation time show `TPS —`.
 
-The `$ / M` value is the model's list-price rate from `usage.cost.total`, not the cumulative session cost shown in the footer. Every telemetry field can be toggled from the **Telemetry** tab.
+The `$ / M` value is the model's list-price rate from `usage.cost.total`, not the cumulative session cost shown in the footer. Cache-hit rate uses the latest assistant usage (`cacheRead / (input + cacheRead + cacheWrite)`) and is omitted when the provider never reported cache tokens. Footer cache-hit and telemetry cache-hit can be toggled independently from the **Footer** and **Telemetry** tabs.
 
 ## Local development
 

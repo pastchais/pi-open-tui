@@ -285,6 +285,12 @@ test("ASCII footer renders icons as semantic labels", () => {
 	assert.equal(hiddenOutput.length, 2);
 	assert.doesNotMatch(hiddenOutput.join("\n"), /goal active/);
 	assert.equal(extensionStatusReads, 1);
+
+	config.footerSegments.cacheHit = false;
+	const withoutCache = component.render(160).join("\n");
+	assert.ok(withoutCache.includes("↑ 100"), `tokens should remain\n${withoutCache}`);
+	assert.ok(withoutCache.includes("↓ 40"), `tokens should remain\n${withoutCache}`);
+	assert.ok(!withoutCache.includes("c 50.0%"), `cache hit should be hidden\n${withoutCache}`);
 });
 
 function renderFooterWithSession(opts: {

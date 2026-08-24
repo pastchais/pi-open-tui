@@ -1,11 +1,11 @@
 {
   "name": "pi-open-tui",
-  "version": "0.2.15",
-  "description": "A polished TUI for Pi coding agent: animated logo header, Starship-style footer, rounded editor with model metadata, and prompt-box user messages.",
+  "version": "0.2.16",
+  "description": "Fork of pi-open-tui with cache-hit rate in the footer and turn telemetry.",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OldSuns/pi-open-tui.git"
+    "url": "git+https://github.com/pastchais/pi-open-tui.git"
   },
   "keywords": [
     "pi-package",
@@ -32,7 +32,7 @@
     "extensions": [
       "./extensions/open-tui/index.ts"
     ],
-    "image": "https://raw.githubusercontent.com/OldSuns/pi-open-tui/main/assets/preview_dashboard_1.png"
+    "image": "https://raw.githubusercontent.com/pastchais/pi-open-tui/main/assets/preview_dashboard_1.png"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": ">=0.80",

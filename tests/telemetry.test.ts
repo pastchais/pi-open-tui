@@ -80,6 +80,9 @@ test("uses total output over full generation time", () => {
 		totalMs: 5_000,
 		inputTokens: 50,
 		outputTokens: 20,
+		cacheReadTokens: 0,
+		cacheWriteTokens: 0,
+		cacheHitRate: undefined,
 		stallMs: 0,
 		stallCount: 0,
 		rateUsdPerMTokens: 4,
@@ -149,6 +152,9 @@ test("uses footer semantics and respects telemetry segment settings", () => {
 		totalMs: 900,
 		inputTokens: 50,
 		outputTokens: 20,
+		cacheReadTokens: 0,
+		cacheWriteTokens: 0,
+		cacheHitRate: undefined,
 		stallMs: 800,
 		stallCount: 1,
 		rateUsdPerMTokens: 4,
@@ -170,6 +176,7 @@ test("uses footer semantics and respects telemetry segment settings", () => {
 		ttft: false,
 		duration: false,
 		tokens: false,
+		cacheHit: false,
 		stalls: false,
 		cost: false,
 	};
@@ -381,6 +388,35 @@ test("aggregates all output and generation time across an agent run", () => {
 	assert.equal(telemetry.outputTokens, 55);
 	assert.equal(telemetry.totalTokens, 225);
 	assert.equal(telemetry.rateUsdPerMTokens, 4);
+});
+
+test("includes cache-hit rate when the provider reports cache tokens", () => {
+	let now = 0;
+	const tracker = new TurnTelemetryTracker(() => now);
+	const message = makeMessage(20, 50);
+	message.usage.cacheRead = 350;
+	message.usage.cacheWrite = 0;
+	message.usage.totalTokens = 420;
+
+	startTurn(tracker, message);
+	now = 100;
+	tracker.handle(update(message));
+	now = 500;
+	const telemetry = endTurn(tracker, message)!;
+
+	assert.equal(telemetry.cacheReadTokens, 350);
+	assert.equal(telemetry.cacheWriteTokens, 0);
+	assert.equal(telemetry.cacheHitRate, 87.5);
+	assert.match(
+		formatTurnTelemetry(telemetry, theme, DEFAULT_CONFIG.telemetry, "ascii"),
+		/c CH 87\.5%/
+	);
+
+	const hiddenCache = { ...DEFAULT_CONFIG.telemetry, cacheHit: false };
+	assert.doesNotMatch(
+		formatTurnTelemetry(telemetry, theme, hiddenCache, "ascii"),
+		/CH /
+	);
 });
 
 test("open-tui notifies once after a complete agent run", () => {

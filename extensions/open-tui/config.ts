@@ -21,6 +21,7 @@ export interface FooterSegments {
 	runtime: boolean;
 	context: boolean;
 	tokens: boolean;
+	cacheHit: boolean;
 	cost: boolean;
 	extensionStatuses: boolean;
 }
@@ -31,6 +32,7 @@ export interface TelemetryConfig {
 	ttft: boolean;
 	duration: boolean;
 	tokens: boolean;
+	cacheHit: boolean;
 	stalls: boolean;
 	cost: boolean;
 }
@@ -70,6 +72,7 @@ export const DEFAULT_CONFIG: OpenTuiConfig = {
 		runtime: true,
 		context: true,
 		tokens: true,
+		cacheHit: true,
 		cost: true,
 		extensionStatuses: true,
 	},
@@ -79,6 +82,7 @@ export const DEFAULT_CONFIG: OpenTuiConfig = {
 		ttft: true,
 		duration: true,
 		tokens: true,
+		cacheHit: true,
 		stalls: true,
 		cost: true,
 	},

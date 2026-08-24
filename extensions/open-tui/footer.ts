@@ -160,8 +160,10 @@ function renderStatsBlock(
 	if (segments.tokens) {
 		stats.push(theme.fg("accent", `${glyphs.input} ${fmtTokens(totals.input)}`));
 		stats.push(theme.fg("success", `${glyphs.output} ${fmtTokens(totals.output)}`));
-		// ponytail: hide cache-hit rate when the provider never reported cache
-		// tokens — avoids a misleading "0%" on providers without prompt caching.
+	}
+	// Hide cache-hit rate when the provider never reported cache tokens —
+	// avoids a misleading "0%" on providers without prompt caching.
+	if (segments.cacheHit) {
 		const hasCacheTokens = totals.cacheRead > 0 || totals.cacheWrite > 0;
 		if (hasCacheTokens && totals.latestCacheHitRate !== undefined) {
 			stats.push(theme.fg(cacheHitColor(totals.latestCacheHitRate), `${glyphs.cacheHit} ${totals.latestCacheHitRate.toFixed(1)}%`));

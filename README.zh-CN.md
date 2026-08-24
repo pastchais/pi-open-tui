@@ -2,17 +2,17 @@
 
 [English](./README.md) | **简体中文**
 
-一个为 [Pi](https://pi.dev) 编程代理打造的终端界面扩展，将 pi-haiku、pi-claude-code-tui 与 pi-zentui 的优秀设计整合为统一、可配置的使用体验。
+一个为 [Pi](https://pi.dev) 编程代理打造的终端界面扩展。这是 [OldSuns/pi-open-tui](https://github.com/OldSuns/pi-open-tui) 的维护 fork，在底栏和单轮遥测中增加了独立的缓存命中率。
 
 ![pi-open-tui 预览](https://raw.githubusercontent.com/OldSuns/pi-open-tui/main/assets/preview_dashboard_1.png)
 
 ## 功能亮点
 
 - **Pi 顶栏**：显示模型、思考等级、当前目录和常用斜杠命令提示
-- **自适应底栏**：集中展示 Git 状态、运行环境、上下文用量、Token、费用和扩展状态
+- **自适应底栏**：集中展示 Git 状态、运行环境、上下文用量、Token、最近一次缓存命中率、费用和扩展状态
 - **带边框的编辑器**：支持块状、竖线和下划线三种光标样式
 - **项目环境感知**：识别 50 多种运行环境，并展示 ahead/behind、已暂存、已修改、未跟踪、stash 和 detached HEAD 等 Git 状态
-- **单轮遥测**：展示 TPS、首 Token 延迟（TTFT）、耗时、停顿、Token 数量和模型标价速率
+- **单轮遥测**：展示 TPS、首 Token 延迟（TTFT）、耗时、停顿、Token 数量、缓存命中率和模型标价速率
 - **交互式设置**：通过 `/open-tui` 配置，并支持英文和简体中文界面
 - **带版本保护的 Pi 兼容层**：全屏滚轮速度所依赖的运行时支持发生变化时，会回退为 Pi 默认行为
 
@@ -27,13 +27,13 @@
 安装扩展：
 
 ```bash
-pi install npm:pi-open-tui
+pi install git:github.com/pastchais/pi-open-tui
 ```
 
 也可以只在当前会话中试用：
 
 ```bash
-pi -e npm:pi-open-tui
+pi -e git:github.com/pastchais/pi-open-tui
 ```
 
 ## 字体与图标
@@ -72,6 +72,7 @@ pi -e npm:pi-open-tui
     "runtime": true,
     "context": true,
     "tokens": true,
+    "cacheHit": true,
     "cost": true,
     "extensionStatuses": true
   },
@@ -81,6 +82,7 @@ pi -e npm:pi-open-tui
     "ttft": true,
     "duration": true,
     "tokens": true,
+    "cacheHit": true,
     "stalls": true,
     "cost": true
   }
@@ -107,12 +109,12 @@ pi -e npm:pi-open-tui
 每次 Agent 完整运行结束后，pi-open-tui 会显示一条临时结果，并将其中的多个工具调用轮次合并统计：
 
 ```text
-> TPS 42.5 tok/s | ~ TTFT 1.2s | + 29.7s | ↑ 567 | ↓ 1.2k | ! stall 1x / 4.3s | $ $3.60/M
+> TPS 42.5 tok/s | ~ TTFT 1.2s | + 29.7s | ↑ 567 | ↓ 1.2k | c CH 88.2% | ! stall 1x / 4.3s | $ $3.60/M
 ```
 
 TPS 的计算方式是：将本次运行中服务商报告的全部 Assistant 输出 Token，除以各个生成轮次的总耗时。计时范围从 `turn_start` 到 Assistant 的 `message_end`，包含 TTFT、隐藏推理、缓冲和停顿，但不包含轮次之间的工具执行时间。没有输出 Token 或无法测得生成时间时，会显示 `TPS —`。
 
-`$ / M` 表示根据 `usage.cost.total` 得到的模型标价速率，不是底栏中的会话累计费用。所有遥测字段都可以在**遥测**页单独开关。
+`$ / M` 表示根据 `usage.cost.total` 得到的模型标价速率，不是底栏中的会话累计费用。缓存命中率取最近一条 Assistant usage（`cacheRead / (input + cacheRead + cacheWrite)`）；服务商没有报过缓存 Token 时不显示。底栏和遥测的缓存命中可以在**底栏**与**遥测**页独立开关。
 
 ## 本地开发
 
