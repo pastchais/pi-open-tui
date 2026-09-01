@@ -288,7 +288,7 @@ export function installFooter(
 				const line1 = alignRight(fitted.join(" "), fittedContext, width, theme);
 
 				const modelParts: string[] = [];
-				modelParts.push(theme.fg("mdCode", glyphs.model));
+				modelParts.push(theme.fg("success", glyphs.model));
 				if (meta.provider && meta.provider !== "Unknown") {
 					modelParts.push(theme.fg(providerColor(ctx.model?.provider ?? "none"), meta.provider));
 				}

@@ -29,25 +29,26 @@ export interface IconGlyphs {
 	deleted: string;
 }
 
-// Hybrid: Codicons for UI chrome, Octicons for Git (1-cell, theme-colored).
+// Shapes must stay unique in a 2-line footer. Token arrows are FA filled;
+// git ahead/behind are Octicon chevrons so they do not collide.
 const NERD_GLYPHS: IconGlyphs = {
-	cwd: "\uEA83", // nf-cod-folder
+	cwd: "\uF4D3", // nf-oct-file_directory_fill
 	session: "\uEA66", // nf-cod-tag
 	git: "\uF418", // nf-oct-git_branch
-	working: "\uEB19", // nf-cod-loading
+	working: "\uF43A", // nf-oct-clock
 	done: "\uEAB2", // nf-cod-check
-	context: "\uEB03", // nf-cod-graph
-	model: "\uEAC4", // nf-cod-code
-	thinking: "\uEA61", // nf-cod-lightbulb
+	context: "\uF463", // nf-oct-meter
+	model: "\u{F06A9}", // nf-md-robot
+	thinking: "\u{F09D1}", // nf-md-brain
 	// client network view: input = upload to API, output = download from API
-	input: "\uEAC3", // nf-cod-cloud_upload
-	output: "\uEAC2", // nf-cod-cloud_download
-	cacheHit: "\uEACE", // nf-cod-database
-	cost: "\uF155", // nf-fa-usd
+	input: "\uF062", // nf-fa-arrow_up
+	output: "\uF063", // nf-fa-arrow_down
+	cacheHit: "\uF140", // nf-fa-bullseye
+	cost: "\uF0D6", // nf-fa-money
 	speed: "\uEB44", // nf-cod-rocket
-	latency: "\uEB7C", // nf-cod-watch
+	latency: "\uF252", // nf-fa-hourglass_half
 	stall: "\uEA6C", // nf-cod-warning
-	extensions: "\uEAE6", // nf-cod-extensions
+	extensions: "\uF1E6", // nf-fa-plug
 	ahead: "\uF431", // nf-oct-arrow_up
 	behind: "\uF433", // nf-oct-arrow_down
 	diverged: "\uF443", // nf-oct-arrow_switch

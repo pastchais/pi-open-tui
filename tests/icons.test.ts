@@ -76,6 +76,17 @@ test("nerd and ascii glyphs stay distinct per semantic", () => {
 	}
 });
 
+test("nerd glyphs are unique so footer icons do not collide", () => {
+	const nerd = resolveGlyphs("nerd");
+	const seen = new Map<string, string>();
+	for (const key of GLYPH_KEYS) {
+		const glyph = nerd[key];
+		const previous = seen.get(glyph);
+		assert.equal(previous, undefined, `nerd.${key} reuses nerd.${previous} (${glyph})`);
+		seen.set(glyph, key);
+	}
+});
+
 test("runtime symbols use Nerd Font logos in nerd mode", () => {
 	assert.equal(runtimeSymbol("bun", "nerd"), "\uE76F");
 	assert.equal(runtimeSymbol("nodejs", "nerd"), "\uE718");
