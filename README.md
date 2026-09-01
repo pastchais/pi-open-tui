@@ -42,7 +42,7 @@ Download any patched font from the official [Nerd Fonts downloads page](https://
 
 The default `auto` mode detects the terminal environment, not the installed font file. If icons appear as boxes or incorrect symbols, open `/open-tui` and choose one of these modes under **Appearance**:
 
-- `nerd`: force Nerd Font icons after configuring a Nerd Font in the terminal
+- `nerd`: force Nerd Font icons after configuring a Nerd Font in the terminal, including Git status (ahead, behind, modified, staged, and the rest)
 - `ascii`: use plain-text icons with no patched font required
 - `auto`: use Nerd Font icons in recognized terminals and ASCII elsewhere
 

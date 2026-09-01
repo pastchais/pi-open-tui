@@ -167,6 +167,16 @@ test("both icon modes provide every footer semantic", () => {
 		"latency",
 		"stall",
 		"extensions",
+		"ahead",
+		"behind",
+		"diverged",
+		"conflicted",
+		"stashed",
+		"modified",
+		"staged",
+		"untracked",
+		"renamed",
+		"deleted",
 	] as const;
 
 	for (const mode of ["nerd", "ascii"] as const) {
@@ -379,4 +389,66 @@ test("session name uses matching glyph in nerd and ascii modes", () => {
 	assert.ok(asciiOut.includes(resolveGlyphs("ascii").session), `ascii glyph missing\n${asciiOut}`);
 	const nerdOut = renderFooterWithSession({ mode: "nerd", sessionName: "sess" });
 	assert.ok(nerdOut.includes(resolveGlyphs("nerd").session), `nerd glyph missing\n${nerdOut}`);
+});
+
+test("nerd footer renders git status with Nerd Font glyphs", () => {
+	let footerFactory: NonNullable<Parameters<ExtensionContext["ui"]["setFooter"]>[0]> | undefined;
+	const ctx = {
+		model: { provider: "openai", contextWindow: 1_000 },
+		ui: {
+			setFooter(factory: typeof footerFactory) {
+				footerFactory = factory;
+			},
+		},
+		sessionManager: {
+			getCwd: () => "/work/project",
+			getEntries: () => [],
+			getSessionName: () => undefined,
+		},
+		getContextUsage: () => ({ tokens: 0, contextWindow: 1_000, percent: 0 }),
+	} as unknown as ExtensionContext;
+	const config = structuredClone(DEFAULT_CONFIG);
+	config.icons.mode = "nerd";
+	const glyphs = resolveGlyphs("nerd");
+	const state: FooterState = {
+		git: {
+			...emptyGitStatus(),
+			branch: "main",
+			modified: 2,
+			staged: 1,
+			untracked: 3,
+			ahead: 4,
+		},
+		runtime: { name: "bun", version: "1.2.0" },
+		sessionStartEpoch: Date.now(),
+		workingSince: undefined,
+		lastDoneIn: undefined,
+	};
+	installFooter(
+		ctx,
+		() => state,
+		() => config,
+		() => ({ provider: "OpenAI", model: "gpt-5", effort: "off" }),
+		{ setRequestRender() {}, scheduleGitRefresh() {} },
+	);
+	assert.ok(footerFactory);
+	const component = footerFactory(
+		{ requestRender() {} } as TUI,
+		theme,
+		{
+			onBranchChange: () => () => {},
+			getExtensionStatuses: () => new Map(),
+		} as unknown as ReadonlyFooterDataProvider,
+	) as Component;
+	const output = component.render(160).join("\n");
+	for (const expected of [
+		`${glyphs.git} main`,
+		`${glyphs.modified}2`,
+		`${glyphs.staged}1`,
+		`${glyphs.untracked}3`,
+		`${glyphs.ahead}4`,
+	]) {
+		assert.ok(output.includes(expected), `missing ${expected}\n${output}`);
+	}
+	assert.ok(!output.includes("!2"), `ascii modified marker should not appear\n${output}`);
 });

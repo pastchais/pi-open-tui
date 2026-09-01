@@ -42,7 +42,7 @@ pi -e git:github.com/pastchais/pi-open-tui
 
 默认的 `auto` 模式检测的是终端环境，无法确认终端当前实际使用的字体。如果图标显示为方框、乱码或错误符号，请打开 `/open-tui`，在**外观**页选择合适的模式：
 
-- `nerd`：终端已配置 Nerd Font 时，强制使用 Nerd Font 图标
+- `nerd`：终端已配置 Nerd Font 时，强制使用 Nerd Font 图标，包括 Git 状态（ahead、behind、已修改、已暂存等）
 - `ascii`：使用纯文本图标，无需安装修补字体
 - `auto`：在已识别的终端中使用 Nerd Font 图标，其他环境回退到 ASCII
 

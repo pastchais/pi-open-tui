@@ -30,33 +30,33 @@ export interface IconGlyphs {
 }
 
 const NERD_GLYPHS: IconGlyphs = {
-	cwd: "",
-	session: "",
-	git: "",
-	working: "",
-	done: "",
-	context: "",
-	model: "",
-	thinking: "",
+	cwd: "\uF07C", // nf-fa-folder
+	session: "\uF02B", // nf-fa-tag
+	git: "\uF418", // nf-oct-git_branch
+	working: "\uF017", // nf-fa-clock_o
+	done: "\uF00C", // nf-fa-check
+	context: "\uF0C9", // nf-fa-bars
+	model: "\uF121", // nf-fa-code
+	thinking: "\uF0EB", // nf-fa-lightbulb_o
 	// client network view: input = upload to API, output = download from API
-	input: "",
-	output: "",
-	cacheHit: "",
-	cost: "",
-	speed: "󰓅",
-	latency: "",
-	stall: "",
-	extensions: "",
-	ahead: "↑",
-	behind: "↓",
-	diverged: "⇕",
-	conflicted: "=",
-	stashed: "$",
-	modified: "!",
-	staged: "+",
-	untracked: "?",
-	renamed: "»",
-	deleted: "✘",
+	input: "\uF093", // nf-fa-upload
+	output: "\uF019", // nf-fa-download
+	cacheHit: "\uF1C0", // nf-fa-database
+	cost: "\uF155", // nf-fa-usd
+	speed: "\u{F04C5}", // nf-md-speedometer
+	latency: "\uF252", // nf-fa-hourglass_half
+	stall: "\uF071", // nf-fa-warning
+	extensions: "\uF1E6", // nf-fa-plug
+	ahead: "\uF062", // nf-fa-arrow_up
+	behind: "\uF063", // nf-fa-arrow_down
+	diverged: "\uF0DC", // nf-fa-sort
+	conflicted: "\uF419", // nf-oct-git_merge
+	stashed: "\uF01C", // nf-fa-inbox
+	modified: "\uF040", // nf-fa-pencil
+	staged: "\uF067", // nf-fa-plus
+	untracked: "\uF128", // nf-fa-question
+	renamed: "\uF064", // nf-fa-share
+	deleted: "\uF068", // nf-fa-minus
 };
 
 // ponytail: ASCII fallback uses compact symbols (not English words) to keep
@@ -94,12 +94,29 @@ const ASCII_GLYPHS: IconGlyphs = {
 const NERD_FONT_TERMINALS = new Set([
 	"iTerm.app",
 	"Ghostty",
+	"ghostty",
 	"WezTerm",
 	"kitty",
 	"rio",
 	"tabby",
+	"Tabby",
 	"WindowsTerminal",
 	"vscode",
+	"WarpTerminal",
+	"Hyper",
+	"Alacritty",
+	"alacritty",
+	"Terminus",
+	"mintty",
+]);
+
+const NERD_FONT_TERMS = new Set([
+	"xterm-kitty",
+	"xterm-ghostty",
+	"wezterm",
+	"alacritty",
+	"rio",
+	"foot",
 ]);
 
 export function detectNerdFont(): boolean {
@@ -109,15 +126,20 @@ export function detectNerdFont(): boolean {
 	const lcTerminal = process.env.LC_TERMINAL;
 	if (lcTerminal && NERD_FONT_TERMINALS.has(lcTerminal)) return true;
 
-	if (process.env.TERM === "xterm-kitty") return true;
+	const term = process.env.TERM;
+	if (term && (NERD_FONT_TERMS.has(term) || term.startsWith("foot-"))) return true;
 
-	// Windows Terminal sets WT_SESSION (not TERM_PROGRAM)
-	if (process.env.WT_SESSION) return true;
-
-	// VS Code integrated terminal
-	if (process.env.TERM_PROGRAM === "vscode") return true;
-
-	return false;
+	// Terminal-specific env vars set even when TERM_PROGRAM is missing
+	// (Windows Terminal, Kitty, WezTerm, Ghostty, Alacritty, iTerm2).
+	return Boolean(
+		process.env.WT_SESSION ||
+			process.env.KITTY_WINDOW_ID ||
+			process.env.WEZTERM_EXECUTABLE ||
+			process.env.WEZTERM_PANE ||
+			process.env.GHOSTTY_RESOURCES_DIR ||
+			process.env.ALACRITTY_SOCKET ||
+			process.env.ITERM_SESSION_ID,
+	);
 }
 
 export function resolveIconMode(mode: IconMode): "nerd" | "ascii" {
@@ -143,7 +165,7 @@ const RUNTIME_SYMBOLS: Record<string, string> = {
 	swift: "\uE755",
 	kotlin: "\uE634",
 	deno: "\uE7FB",
-	bun: "\uE6FB",
+	bun: "\uE76F", // nf-seti-bun
 	php: "\uE73D",
 	haskell: "\uE777",
 	julia: "\uE624",
@@ -203,5 +225,5 @@ const RUNTIME_ASCII_SYMBOLS: Record<string, string> = {
 
 export function runtimeSymbol(name: string, mode: IconMode): string {
 	if (resolveIconMode(mode) === "ascii") return RUNTIME_ASCII_SYMBOLS[name] ?? name;
-	return RUNTIME_SYMBOLS[name] ?? "";
+	return RUNTIME_SYMBOLS[name] ?? "\uF120"; // nf-fa-terminal
 }
