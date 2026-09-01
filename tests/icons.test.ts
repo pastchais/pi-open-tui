@@ -19,6 +19,7 @@ const GLYPH_KEYS = [
 	"thinking",
 	"input",
 	"output",
+	"cache",
 	"cacheHit",
 	"cost",
 	"speed",

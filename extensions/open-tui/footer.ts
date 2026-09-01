@@ -161,12 +161,17 @@ function renderStatsBlock(
 		stats.push(theme.fg("accent", `${glyphs.input} ${fmtTokens(totals.input)}`));
 		stats.push(theme.fg("success", `${glyphs.output} ${fmtTokens(totals.output)}`));
 	}
-	// Hide cache-hit rate when the provider never reported cache tokens —
+	// Hide cache stats when the provider never reported cache tokens —
 	// avoids a misleading "0%" on providers without prompt caching.
 	if (segments.cacheHit) {
 		const hasCacheTokens = totals.cacheRead > 0 || totals.cacheWrite > 0;
-		if (hasCacheTokens && totals.latestCacheHitRate !== undefined) {
-			stats.push(theme.fg(cacheHitColor(totals.latestCacheHitRate), `${glyphs.cacheHit} ${totals.latestCacheHitRate.toFixed(1)}%`));
+		if (hasCacheTokens) {
+			if (totals.cacheRead > 0) {
+				stats.push(theme.fg("mdLink", `${glyphs.cache} ${fmtTokens(totals.cacheRead)}`));
+			}
+			if (totals.latestCacheHitRate !== undefined) {
+				stats.push(theme.fg(cacheHitColor(totals.latestCacheHitRate), `${glyphs.cacheHit} ${totals.latestCacheHitRate.toFixed(1)}%`));
+			}
 		}
 	}
 	if (segments.cost) {

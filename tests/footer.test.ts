@@ -161,6 +161,7 @@ test("both icon modes provide every footer semantic", () => {
 		"thinking",
 		"input",
 		"output",
+		"cache",
 		"cacheHit",
 		"cost",
 		"speed",
@@ -203,6 +204,32 @@ test("normalizes invalid usage totals", () => {
 	assert.deepEqual(getUsageTotals(ctx), {
 		input: 0, output: 0, cacheRead: 100, cacheWrite: 0, cost: 0, latestCacheHitRate: 100,
 	});
+	invalidateUsageCache();
+});
+
+test("usage totals refresh when the last assistant usage changes in place", () => {
+	const usage = {
+		input: 10,
+		output: 2,
+		cacheRead: 90,
+		cacheWrite: 0,
+		cost: { total: 0.01 },
+	};
+	const entries = [{ id: "same", timestamp: 1, type: "message", message: { role: "assistant", usage } }];
+	const ctx = {
+		sessionManager: { getEntries: () => entries },
+	} as unknown as ExtensionContext;
+
+	invalidateUsageCache();
+	assert.equal(getUsageTotals(ctx).input, 10);
+	assert.equal(getUsageTotals(ctx).latestCacheHitRate, 90);
+
+	usage.input = 20;
+	usage.cacheRead = 180;
+	const next = getUsageTotals(ctx);
+	assert.equal(next.input, 20);
+	assert.equal(next.cacheRead, 180);
+	assert.equal(next.latestCacheHitRate, 90);
 	invalidateUsageCache();
 });
 
@@ -282,6 +309,7 @@ test("ASCII footer renders icons as semantic labels", () => {
 		"~ high",
 		"↑ 100",
 		"↓ 40",
+		"R 100",
 		"c 50.0%",
 		"$ $0.125",
 		"& goal active",
@@ -301,6 +329,7 @@ test("ASCII footer renders icons as semantic labels", () => {
 	assert.ok(withoutCache.includes("↑ 100"), `tokens should remain\n${withoutCache}`);
 	assert.ok(withoutCache.includes("↓ 40"), `tokens should remain\n${withoutCache}`);
 	assert.ok(!withoutCache.includes("c 50.0%"), `cache hit should be hidden\n${withoutCache}`);
+	assert.ok(!withoutCache.includes("R 100"), `cache volume should be hidden\n${withoutCache}`);
 });
 
 function renderFooterWithSession(opts: {

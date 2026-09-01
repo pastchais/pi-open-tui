@@ -11,6 +11,7 @@ export interface IconGlyphs {
 	thinking: string;
 	input: string;
 	output: string;
+	cache: string;
 	cacheHit: string;
 	cost: string;
 	speed: string;
@@ -43,6 +44,7 @@ const NERD_GLYPHS: IconGlyphs = {
 	// client network view: input = upload to API, output = download from API
 	input: "\uF062", // nf-fa-arrow_up
 	output: "\uF063", // nf-fa-arrow_down
+	cache: "\uF013", // nf-fa-cog
 	cacheHit: "\uF140", // nf-fa-bullseye
 	cost: "\uF0D6", // nf-fa-money
 	speed: "\uEB44", // nf-cod-rocket
@@ -75,6 +77,7 @@ const ASCII_GLYPHS: IconGlyphs = {
 	thinking: "~",
 	input: "↑",
 	output: "↓",
+	cache: "R",
 	cacheHit: "c",
 	cost: "$",
 	speed: ">",

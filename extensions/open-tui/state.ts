@@ -24,10 +24,24 @@ export interface UsageTotals {
 
 let usageCache: { key: string; totals: UsageTotals } | undefined;
 
+function usageFingerprint(entry: { type?: string; message?: { role?: string; usage?: { input?: unknown; output?: unknown; cacheRead?: unknown; cacheWrite?: unknown; cost?: { total?: unknown } } } } | undefined): string {
+	const usage = entry?.type === "message" && entry.message?.role === "assistant"
+		? entry.message.usage
+		: undefined;
+	if (!usage) return "";
+	return [
+		finiteOrZero(usage.input),
+		finiteOrZero(usage.output),
+		finiteOrZero(usage.cacheRead),
+		finiteOrZero(usage.cacheWrite),
+		finiteOrZero(usage.cost?.total),
+	].join(":");
+}
+
 function entriesKey(ctx: ExtensionContext): string {
 	const entries = ctx.sessionManager.getEntries();
 	const last = entries.at(-1);
-	return `${entries.length}:${last?.id ?? ""}:${last?.timestamp ?? ""}`;
+	return `${entries.length}:${last?.id ?? ""}:${last?.timestamp ?? ""}:${usageFingerprint(last)}`;
 }
 
 export function getUsageTotals(ctx: ExtensionContext): UsageTotals {

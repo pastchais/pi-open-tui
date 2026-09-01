@@ -220,6 +220,9 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("message_update", (event) => {
 		turnTelemetry.handle(event);
+		if (!sessionLifecycle.isCurrent()) return;
+		invalidateUsageCache();
+		requestFooterRender?.();
 	});
 
 	pi.on("tool_execution_start", (event) => {
