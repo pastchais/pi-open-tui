@@ -78,15 +78,15 @@ function renderGitSegment(
 			if (count > 0) statusIcons.push(theme.fg(color, `${glyph}${count}`));
 		};
 		addStatus(git.conflicted, glyphs.conflicted, "error");
-		addStatus(git.deleted, glyphs.deleted, "error");
+		addStatus(git.deleted, glyphs.deleted, "toolDiffRemoved");
 		addStatus(git.modified, glyphs.modified, "warning");
-		addStatus(git.renamed, glyphs.renamed, "warning");
-		addStatus(git.staged, glyphs.staged, "success");
+		addStatus(git.renamed, glyphs.renamed, "mdLink");
+		addStatus(git.staged, glyphs.staged, "toolDiffAdded");
 		addStatus(git.untracked, glyphs.untracked, "muted");
-		addStatus(git.stashed, glyphs.stashed, "muted");
+		addStatus(git.stashed, glyphs.stashed, "thinkingLow");
 
 		if (git.ahead > 0 && git.behind > 0) {
-			statusIcons.push(theme.fg("warning", `${glyphs.diverged}${git.ahead}/${git.behind}`));
+			statusIcons.push(theme.fg("thinkingHigh", `${glyphs.diverged}${git.ahead}/${git.behind}`));
 		} else if (git.ahead > 0) {
 			statusIcons.push(theme.fg("success", `${glyphs.ahead}${git.ahead}`));
 		} else if (git.behind > 0) {
@@ -116,7 +116,7 @@ function renderRuntimeSegment(
 
 function renderTimerSegment(theme: Theme, state: FooterState, glyphs: IconGlyphs): string {
 	if (state.workingSince !== undefined) {
-		return `${theme.fg("accent", glyphs.working)} ${theme.fg("dim", "working")} ${theme.fg("accent", formatDuration(Date.now() - state.workingSince))}`;
+		return `${theme.fg("thinkingHigh", glyphs.working)} ${theme.fg("dim", "working")} ${theme.fg("thinkingHigh", formatDuration(Date.now() - state.workingSince))}`;
 	}
 	if (state.lastDoneIn !== undefined) {
 		return `${theme.fg("success", glyphs.done)} ${theme.fg("success", "done")} ${theme.fg("text", formatDuration(state.lastDoneIn))}`;
@@ -190,7 +190,7 @@ function renderExtensionStatusLines(
 
 	const separator = ` ${theme.fg("dim", "|")} `;
 	const statusText = statuses.map((status) => theme.fg("muted", status)).join(separator);
-	const line = `${theme.fg("mdLink", glyphs.extensions)} ${statusText}`;
+	const line = `${theme.fg("thinkingMedium", glyphs.extensions)} ${statusText}`;
 	return wrapTextWithAnsi(line, width);
 }
 
@@ -233,7 +233,7 @@ export function installFooter(
 				if (segments.cwd) {
 					const maxCwd = Math.min(30, Math.max(10, Math.floor(width * 0.4)));
 					const cwd = formatCwd(ctx.sessionManager.getCwd());
-					const cwdPrefix = `${theme.fg("mdLink", glyphs.cwd)} `;
+					const cwdPrefix = `${theme.fg("accent", glyphs.cwd)} `;
 					const accent = (text: string) => theme.fg("accent", text);
 					leftParts.push({
 						text: `${cwdPrefix}${accent(truncatePath(cwd, maxCwd))}`,
@@ -252,7 +252,7 @@ export function installFooter(
 					const sessionName = ctx.sessionManager.getSessionName();
 					if (sessionName) {
 						leftParts.push({
-							text: `${theme.fg("dim", glyphs.session)} ${theme.fg("text", truncateToWidth(sessionName, 24, theme.fg("dim", "...")))}`,
+							text: `${theme.fg("thinkingMedium", glyphs.session)} ${theme.fg("text", truncateToWidth(sessionName, 24, theme.fg("dim", "...")))}`,
 							priority: 2,
 						});
 					}
@@ -288,7 +288,7 @@ export function installFooter(
 				const line1 = alignRight(fitted.join(" "), fittedContext, width, theme);
 
 				const modelParts: string[] = [];
-				modelParts.push(theme.fg("mdLink", glyphs.model));
+				modelParts.push(theme.fg("mdCode", glyphs.model));
 				if (meta.provider && meta.provider !== "Unknown") {
 					modelParts.push(theme.fg(providerColor(ctx.model?.provider ?? "none"), meta.provider));
 				}

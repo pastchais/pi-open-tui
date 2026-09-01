@@ -294,10 +294,10 @@ export function formatTurnTelemetry(
 	const parts: string[] = [];
 	if (config.tps) {
 		const value = telemetry.tps === null ? "—" : `${telemetry.tps.toFixed(1)} tok/s`;
-		parts.push(theme.fg(telemetry.tps === null ? "muted" : "accent", `${glyphs.speed} TPS ${value}`));
+		parts.push(theme.fg(telemetry.tps === null ? "muted" : "thinkingHigh", `${glyphs.speed} TPS ${value}`));
 	}
 	if (config.ttft) {
-		parts.push(theme.fg("text", `${glyphs.latency} TTFT ${formatTurnDuration(telemetry.ttftMs)}`));
+		parts.push(theme.fg("mdLink", `${glyphs.latency} TTFT ${formatTurnDuration(telemetry.ttftMs)}`));
 	}
 	if (config.duration) {
 		parts.push(theme.fg("success", `${glyphs.done} ${formatTurnDuration(telemetry.totalMs)}`));
@@ -310,7 +310,7 @@ export function formatTurnTelemetry(
 		parts.push(theme.fg(cacheHitColor(telemetry.cacheHitRate), `${glyphs.cacheHit} CH ${telemetry.cacheHitRate.toFixed(1)}%`));
 	}
 	if (config.stalls && telemetry.stallMs > 0) {
-		parts.push(theme.fg("warning", `${glyphs.stall} stall ${telemetry.stallCount}x / ${formatTurnDuration(telemetry.stallMs)}`));
+		parts.push(theme.fg("error", `${glyphs.stall} stall ${telemetry.stallCount}x / ${formatTurnDuration(telemetry.stallMs)}`));
 	}
 	if (config.cost && telemetry.rateUsdPerMTokens !== null) {
 		parts.push(theme.fg("warning", `${glyphs.cost} $${telemetry.rateUsdPerMTokens.toFixed(2)}/M`));

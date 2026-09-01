@@ -29,34 +29,35 @@ export interface IconGlyphs {
 	deleted: string;
 }
 
+// Hybrid: Codicons for UI chrome, Octicons for Git (1-cell, theme-colored).
 const NERD_GLYPHS: IconGlyphs = {
-	cwd: "\uF07C", // nf-fa-folder
-	session: "\uF02B", // nf-fa-tag
+	cwd: "\uEA83", // nf-cod-folder
+	session: "\uEA66", // nf-cod-tag
 	git: "\uF418", // nf-oct-git_branch
-	working: "\uF017", // nf-fa-clock_o
-	done: "\uF00C", // nf-fa-check
-	context: "\uF0C9", // nf-fa-bars
-	model: "\uF121", // nf-fa-code
-	thinking: "\uF0EB", // nf-fa-lightbulb_o
+	working: "\uEB19", // nf-cod-loading
+	done: "\uEAB2", // nf-cod-check
+	context: "\uEB03", // nf-cod-graph
+	model: "\uEAC4", // nf-cod-code
+	thinking: "\uEA61", // nf-cod-lightbulb
 	// client network view: input = upload to API, output = download from API
-	input: "\uF093", // nf-fa-upload
-	output: "\uF019", // nf-fa-download
-	cacheHit: "\uF1C0", // nf-fa-database
+	input: "\uEAC3", // nf-cod-cloud_upload
+	output: "\uEAC2", // nf-cod-cloud_download
+	cacheHit: "\uEACE", // nf-cod-database
 	cost: "\uF155", // nf-fa-usd
-	speed: "\u{F04C5}", // nf-md-speedometer
-	latency: "\uF252", // nf-fa-hourglass_half
-	stall: "\uF071", // nf-fa-warning
-	extensions: "\uF1E6", // nf-fa-plug
-	ahead: "\uF062", // nf-fa-arrow_up
-	behind: "\uF063", // nf-fa-arrow_down
-	diverged: "\uF0DC", // nf-fa-sort
+	speed: "\uEB44", // nf-cod-rocket
+	latency: "\uEB7C", // nf-cod-watch
+	stall: "\uEA6C", // nf-cod-warning
+	extensions: "\uEAE6", // nf-cod-extensions
+	ahead: "\uF431", // nf-oct-arrow_up
+	behind: "\uF433", // nf-oct-arrow_down
+	diverged: "\uF443", // nf-oct-arrow_switch
 	conflicted: "\uF419", // nf-oct-git_merge
-	stashed: "\uF01C", // nf-fa-inbox
-	modified: "\uF040", // nf-fa-pencil
-	staged: "\uF067", // nf-fa-plus
-	untracked: "\uF128", // nf-fa-question
-	renamed: "\uF064", // nf-fa-share
-	deleted: "\uF068", // nf-fa-minus
+	stashed: "\uF487", // nf-oct-package
+	modified: "\uF459", // nf-oct-diff_modified
+	staged: "\uF457", // nf-oct-diff_added
+	untracked: "\uF420", // nf-oct-question
+	renamed: "\uF45A", // nf-oct-diff_renamed
+	deleted: "\uF458", // nf-oct-diff_removed
 };
 
 // ponytail: ASCII fallback uses compact symbols (not English words) to keep

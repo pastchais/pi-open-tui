@@ -168,7 +168,7 @@ test("uses footer semantics and respects telemetry segment settings", () => {
 		formatTurnTelemetry(telemetry, styledTheme, DEFAULT_CONFIG.telemetry, "ascii"),
 		/^> TPS 50\.0 tok\/s \| ~ TTFT 0\.2s.*! stall 1x \/ 0\.8s \| \$ \$4\.00\/M$/,
 	);
-	assert.deepEqual(colors, ["accent", "text", "success", "accent", "success", "warning", "warning", "dim"]);
+	assert.deepEqual(colors, ["thinkingHigh", "mdLink", "success", "accent", "success", "error", "warning", "dim"]);
 
 	const hidden: typeof DEFAULT_CONFIG.telemetry = {
 		enabled: false,
